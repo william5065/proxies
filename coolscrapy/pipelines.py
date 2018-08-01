@@ -26,7 +26,6 @@ from utils import check_proxy,check_proxy_update,check_proxy_amazon
 from multiprocessing import freeze_support,Pool
 
 from functools import partial
-from xlrd.compdoc import x_dump_line
 from sqlalchemy import desc,asc
 # Redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 _log = logging.getLogger(__name__)
