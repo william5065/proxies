@@ -99,7 +99,7 @@ class ProxyDatabasePipeline(object):
             proxy_adds = [i[0] for i in tmplist]
             pass_urls =[]          
             ####
-            PROCESSES = 5
+            PROCESSES = 10
             print ('Creating pool with %d processes\n' % PROCESSES)
             pool = Pool(PROCESSES)
             results = []         
