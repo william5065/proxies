@@ -1,6 +1,7 @@
 FROM alpine:latest
 
 RUN apk -U add \
+        bash \
         gcc \
         libffi-dev \
         libxml2-dev \
