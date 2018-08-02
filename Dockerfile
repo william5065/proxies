@@ -2,16 +2,16 @@ FROM python:2.7.15-alpine3.8
 
 RUN apk -U add \
         bash \
-        gcc \
-        libffi-dev \
-        libxml2-dev \
-        libxslt-dev \
-        musl-dev \
-        openssl-dev \
-        py-imaging \
-        py-pip \
-        curl ca-certificates \
-    && update-ca-certificates \
+        # gcc \
+    #     libffi-dev \
+    #     libxml2-dev \
+    #     libxslt-dev \
+    #     musl-dev \
+    #     openssl-dev \
+    #     py-imaging \
+    #     py-pip \
+    #     curl ca-certificates \
+    # && update-ca-certificates \
     && rm -rf /var/cache/apk/* \
     && pip install --upgrade pip \
     && pip install Scrapy \
