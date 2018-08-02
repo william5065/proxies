@@ -76,9 +76,9 @@ class MainResource(APIResource):
         # scheduler.add_job(self.job, 'cron', day_of_week='1-5', hour=6, minute=30)
         # scheduler.add_job(self._scrapy_job,'interval', minutes=40)
         
-        scheduler.add_job(self._scrapy_job, 'date', run_date='2018-08-02 10:36:01')
+        # scheduler.add_job(self._scrapy_job, 'date', run_date='2018-08-02 10:36:01')
         logg.info("Scheduler Task Start")
-        #scheduler.add_job(self._scan_proxy_job,'interval', minutes=20)
+        scheduler.add_job(self._scan_proxy_job,'interval', minutes=40)
         # scheduler.add_job(self._scan_proxy_job, 'date', run_date='2018-07-31 21:54:01')
      
         scheduler.start()
