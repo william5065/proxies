@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM python:2.7.15-alpine3.8
 
 RUN apk -U add \
         bash \
@@ -8,7 +8,6 @@ RUN apk -U add \
         libxslt-dev \
         musl-dev \
         openssl-dev \
-        python-dev \
         py-imaging \
         py-pip \
         curl ca-certificates \
