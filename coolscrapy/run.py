@@ -14,7 +14,6 @@ from scrapy.utils.project import get_project_settings
 from scrapy.utils.log import configure_logging
 from pipelines import ProxyDatabasePipeline
 
-from scrapy.utils.project import get_project_settings
 from scrapy.utils.log import configure_logging
 from pipelines import ProxyDatabasePipeline
 from spiders.kuaidaili_spider import KuaidailiSpider
@@ -23,14 +22,9 @@ from spiders.xicidaili_spider import XicidailiSpider
 from spiders.s89ip_spider import S89ipSpider
 from spiders.yqie_spider import YqieSpider
 from twisted.internet import reactor
-from scrapy.crawler import CrawlerProcess
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
-from tornado import gen
-from tornado.concurrent import Future
-
-from twisted.internet import reactor
 from twisted.web.resource import Resource, NoResource
 
 from twisted.web import server 
@@ -39,15 +33,12 @@ from txrestapi.resource import APIResource
 from txrestapi.methods import GET, POST, PUT, ALL, DELETE 
 
 from utils import response_json
-import logging
-logging.basicConfig(level=logging.DEBUG,
-            format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-           datafmt='%a, %d %b %Y %H:%M:%S',
-            filename='logs/spider.log',
-            filemode='a')
+
+from log_init import Log
+logg = Log()
 
 class MainResource(APIResource):
-    
+
     def _get_proxy_address(self):
         pa = ProxyDatabasePipeline()
         pa.get_proxy_list()
@@ -65,7 +56,8 @@ class MainResource(APIResource):
     
     def _scrapy_job(self):
         
-        print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        # print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        logg.info("Scrapy Start")
 
         configure_logging()
         settings = get_project_settings()
@@ -82,8 +74,10 @@ class MainResource(APIResource):
     def _scheduler_task(self):
         scheduler = BackgroundScheduler()      
         # scheduler.add_job(self.job, 'cron', day_of_week='1-5', hour=6, minute=30)
-        scheduler.add_job(self._scrapy_job,'interval', minutes=40)
-        # scheduler.add_job(self._scrapy_job, 'date', run_date='2018-07-31 21:23:01')
+        # scheduler.add_job(self._scrapy_job,'interval', minutes=40)
+        
+        scheduler.add_job(self._scrapy_job, 'date', run_date='2018-08-02 10:36:01')
+        logg.info("Scheduler Task Start")
         #scheduler.add_job(self._scan_proxy_job,'interval', minutes=20)
         # scheduler.add_job(self._scan_proxy_job, 'date', run_date='2018-07-31 21:54:01')
      
@@ -103,7 +97,8 @@ class MainResource(APIResource):
     @ALL("/geturls")
     def default(self, request):
         data = self._get_proxy_address()
-        
+        logg.info("Success to return urls")
+        logg.info(data)
         return response_json(data,"OK","200")
  
  

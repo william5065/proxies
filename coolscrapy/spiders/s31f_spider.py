@@ -10,14 +10,15 @@
 Topic: 爬取虎嗅网首页
 Desc : 
 """
-import logging
+
 import scrapy
 from items import ProxyItem
 from utils import check_proxy
 from bs4 import BeautifulSoup
 import re
 import requests
-
+from log_init import Log
+logg = Log()
 class S31fSpider(scrapy.Spider):
     name = "31f"
     allowed_domains = ["31f.cn"]
@@ -34,21 +35,21 @@ class S31fSpider(scrapy.Spider):
         print (response.url)
         for sel in sites:
             if sel.find(text =re.compile(r'\d+\.\d+\.\d+\.\d+')):
-                # print(sel)
+                logg.info(sel)
                 item = ProxyItem()
                 item['ip'] = sel.findAll('td')[1].text
-                print (item['ip'] )
+                logg.info (item['ip'] )
                 item['port'] = sel.findAll('td')[2].text
-                print (item['port'])
+                logg.info (item['port'])
                 # url = response.urljoin(item['link'])
                 if 'http-proxy' in response.url:
                     item['protocol'] = "http"
-                    print (item['protocol'])
+                    logg.info (item['protocol'])
                 else:
                     item['protocol'] = sel.findAll('td')[6].text
-                    print (item['protocol'])
+                    logg.info (item['protocol'])
                 item['position'] = sel.findAll('td')[3].text
-                print (item['position'])
+                logg.info (item['position'])
                 proxies ={}
                 item['anonymity'] = 'DDD'
                
@@ -56,6 +57,7 @@ class S31fSpider(scrapy.Spider):
                 proxies[item['protocol']]=url
                 item['protocol'] = item['protocol'].strip().lower()
                 item['speed'] = check_proxy('https://www.amazon.com/',proxies)
+                logg.info("item['speed']:"+ item['speed'])
                 if item['speed']!='-1' and item['speed']!= None:
                     yield item
                 

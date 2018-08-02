@@ -12,7 +12,6 @@ import datetime
 import time
 # import redis
 import json
-import logging
 from contextlib import contextmanager
 
 from scrapy import signals, Request
@@ -28,9 +27,9 @@ from multiprocessing import freeze_support,Pool
 from functools import partial
 from sqlalchemy import desc,asc
 # Redis = redis.StrictRedis(host='localhost', port=6379, db=0)
-_log = logging.getLogger(__name__)
 
-
+from log_init import Log
+logg = Log()
 
 
 @contextmanager
@@ -52,19 +51,20 @@ class ProxyDatabasePipeline(object):
     """Proxy Address记录保存到数据库"""
 
     def __init__(self):
-        print("DDDDD")
+        logg.info("Init ProxyDatabasePipeline")
         engine = db_connect()
         self.Session = sessionmaker(bind=engine)
-        print (self.Session)
+        logg.info(self.Session)
 
     def open_spider(self, spider):
         """This method is called when the spider is opened."""
-        print("Proxy Address 记录保存到数据库 start")
+        # print("Proxy Address 记录保存到数据库 start")
+        logg.info("The spider is opened")
         # pass
 
     def process_item(self, item, spider):
         # logging.info("Proxy Address 记录保存到数据库 start....")
-        print("Proxy Address 记录保存到数据库 start....")
+        logg.info("Proxy Address 记录保存到数据库 start....")
         url = item['protocol'] + "://"+item['ip'] +":"+item['port']
         proxy_address = PorxyAddress(proxy_address=url,
                           position=item['position'],
@@ -75,31 +75,34 @@ class ProxyDatabasePipeline(object):
                           )
         with session_scope(self.Session) as session:
             if session.query(PorxyAddress).filter(PorxyAddress.proxy_address == url,PorxyAddress.deleted==0).all():
-                logging.info("已经有重复数据,不再更新...")
-                print("已经有重复数据,不再更新...")
+                logg.info("已经有重复数据,不再更新...")
+                
 
             if session.query(PorxyAddress).filter(PorxyAddress.proxy_address == url,PorxyAddress.deleted==1).all():
                 session.query(PorxyAddress).filter(PorxyAddress.proxy_address == url).update({'deleted' : 0})
-                logging.info("已经有重复数据,代理又重新有效，...")
-                print("再次更新...") 
+                logg.info("Update the proxy_address :")
+                logg.info(proxy_address)
+                logg.info("已经有重复数据,代理又重新有效，...") 
                 
             else:   
                 session.add(proxy_address)
-                logging.info("proxy_address.id=, {}".format(proxy_address.id))
-        
-                logging.info("将ProxyAddress记录保存到数据库 end....")
+                logg.info("Add the proxy_address :")
+                logg.info(proxy_address)
+                logg.info("将ProxyAddress记录保存到数据库 end....")
         
     
     def get_proxy_list(self):
         with session_scope(self.Session) as session:
             freeze_support()
-            print("+++++++++++++")
+            logg.info("+++++++++++++")
             tmplist = session.query(PorxyAddress.proxy_address).all()           
             proxy_adds = [i[0] for i in tmplist]
+            logg.info("proxy_adds")
+            logg.info(proxy_adds)
             pass_urls =[]          
             ####
             PROCESSES = 10
-            print ('Creating pool with %d processes\n' % PROCESSES)
+            logg.info('Creating pool with %d processes\n' % PROCESSES)
             pool = Pool(PROCESSES)
             results = []         
             res = pool.map_async(check_proxy_update, proxy_adds)
@@ -109,13 +112,13 @@ class ProxyDatabasePipeline(object):
             if res.ready():
                 if res.successful():
                     results = res.get()
-                    print('------')
                     
                     # pass_urls =results.remove('-1')
+                    
                     pass_urls = [x for x in results if x!=None and x!='-1']
-                    print (results)
+                    logg.info("Filte Pass Urls")
+                    logg.info(pass_urls)
                     for i in proxy_adds:
-                        print(i in pass_urls)
                         if i in pass_urls:
                             session.query(PorxyAddress).filter(PorxyAddress.proxy_address == i).update({'deleted' : 0})
                         else:
@@ -127,6 +130,8 @@ class ProxyDatabasePipeline(object):
         with session_scope(self.Session) as session:
             tmplist = session.query(PorxyAddress.proxy_address).filter(PorxyAddress.deleted == 0).order_by(asc(PorxyAddress.speed)).all()
             proxy_adds = [i[0] for i in tmplist]
+            logg.info("Get Pass URL:")
+            logg.info(proxy_adds)
             return proxy_adds[:(int(count))]
     
 

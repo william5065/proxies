@@ -10,14 +10,15 @@
 Topic: 爬取虎嗅网首页
 Desc : 
 """
-import logging
+from log_init import Log
+
 import scrapy
 from items import ProxyItem
 from utils import check_proxy
 from bs4 import BeautifulSoup
 import re
 import requests
-
+logg = Log()
 class XicidailiSpider(scrapy.Spider):
     name = "xicidaili"
     allowed_domains = ["xicidaili.com"]
@@ -32,24 +33,24 @@ class XicidailiSpider(scrapy.Spider):
         soup = BeautifulSoup(data, "html5lib")
         sites =soup.findAll('tr')
 
-        print (response.url)
+        logg.info (response.url)
         for sel in sites:
             if sel.find(text =re.compile(r'\d+\.\d+\.\d+\.\d+')):
-                # print(sel)
+                logg.info(sel)
                 item = ProxyItem()
                 item['ip'] = sel.findAll('td')[1].text.strip()
-                print (item['ip'] )
+                logg.info (item['ip'] )
                 item['port'] = sel.findAll('td')[2].text.strip()
-                print (item['port'])
+                logg.info (item['port'])
                 # url = response.urljoin(item['link'])
                 if 'http-proxy' in response.url:
                     item['protocol'] = "http"
-                    print (item['protocol'])
+                    logg.info (item['protocol'])
                 else:
                     item['protocol'] = sel.findAll('td')[5].text
-                    print (item['protocol'])
+                    logg.info (item['protocol'])
                 item['position'] = sel.findAll('td')[3].text.strip()
-                print (item['position'])
+                logg.info (item['position'])
                 proxies ={}
                 item['anonymity'] = sel.findAll('td')[4].text
                
@@ -57,6 +58,7 @@ class XicidailiSpider(scrapy.Spider):
                 proxies[item['protocol']]=url
                 item['protocol'] = item['protocol'].strip().lower()
                 item['speed'] = check_proxy('https://www.amazon.com/',proxies)
+                logg.info("item['speed']:"+ item['speed'])
                 if item['speed']!='-1' and item['speed']!= None:
                     yield item
                 

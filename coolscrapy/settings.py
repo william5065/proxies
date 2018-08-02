@@ -88,10 +88,10 @@ DOWNLOAD_DELAY=5
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN=16
 # CONCURRENT_REQUESTS_PER_IP=16
-
+HTTPERROR_ALLOWED_CODES = [503,403]
 # Disable cookies (enabled by default)
 COOKIES_ENABLED=False
-
+ROBOTSTXT_OBEY =False
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED=False
 
@@ -135,7 +135,7 @@ COOKIES_ENABLED=False
 # The maximum download delay to be set in case of high latencies
 # AUTOTHROTTLE_MAX_DELAY=60
 # Enable showing throttling stats for every response received:
-# AUTOTHROTTLE_DEBUG=False
+# AUTOTHROTTLE_DEBUG=Falseƒ
 
 # Enable and configure HTTP caching (disabled by default)
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
