@@ -110,8 +110,10 @@ class ProxyDatabasePipeline(object):
                 if res.successful():
                     results = res.get()
                     print('------')
+                    
+                    # pass_urls =results.remove('-1')
+                    pass_urls = [x for x in results if x!=None and x!='-1']
                     print (results)
-                    pass_urls =results.remove('-1')
                     for i in proxy_adds:
                         print(i in pass_urls)
                         if i in pass_urls:
@@ -127,45 +129,6 @@ class ProxyDatabasePipeline(object):
             proxy_adds = [i[0] for i in tmplist]
             return proxy_adds[:(int(count))]
     
-    # def get_proxys_by_special_url(self,special_url):
-        
-    #     with session_scope(self.Session) as session:
-    #         freeze_support()
-    #         tmplist = session.query(PorxyAddress.proxy_address).filter(PorxyAddress.deleted == 0).all()
-    #         proxy_adds = [i[0] for i in tmplist]
-            
-    #         protocol = special_url.split(':')[0]
-    #         print("ppppp")
-    #         print(protocol)
-    #         proxy_adds = [i for i in proxy_adds if protocol == i.split(':')[0]]
-    #         print("___________")
-    #         print(proxy_adds)
-
-    #         pass_urls =[]          
-    #         ####
-    #         PROCESSES = 5
-    #         print ('Creating pool with %d processes uu\n' % PROCESSES)
-    #         pool = Pool(PROCESSES)
-    #         results = []
-            
-    #         # length = len(proxy_adds)
-    #         # special_url_list=[special_url]*length
-    #         # print(special_url_list)
-    #         # print("___________")
-           
-    #         # x_y = zip(special_url_list, proxy_adds)
-    #         # print(x_y)  
-    #         res = pool.map_async(check_proxy_amazon, proxy_adds)
-
-    #         pool.close() 
-    #         pool.join()
-    #         if res.ready():
-    #             if res.successful():
-    #                 results = res.get()
-    #                 if '-1' in results:
-    #                     pass_urls =results.remove('-1')
-    #         print("async finish")
-    #         return pass_urls
 
     def close_spider(self, spider):
         print("*********")
