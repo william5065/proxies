@@ -5,10 +5,6 @@ Topic: sample
 Desc : 
 """
 
-# import tornado.ioloop
-# import tornado.web
-
-
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 from scrapy.utils.log import configure_logging
@@ -23,7 +19,8 @@ from spiders.s89ip_spider import S89ipSpider
 from spiders.yqie_spider import YqieSpider
 from twisted.internet import reactor
 
-from apscheduler.schedulers.background import BackgroundScheduler
+# from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.twisted import TwistedScheduler
 from datetime import datetime
 from twisted.web.resource import Resource, NoResource
 
@@ -63,22 +60,23 @@ class MainResource(APIResource):
         settings = get_project_settings()
         runner = CrawlerRunner(settings)
         runner.crawl(KuaidailiSpider)
-        runner.crawl(S31fSpider)
-        runner.crawl(XicidailiSpider)
-        runner.crawl(S89ipSpider)
-        runner.crawl(YqieSpider)
+        # runner.crawl(S31fSpider)
+        # runner.crawl(XicidailiSpider)
+        # runner.crawl(S89ipSpider)
+        # runner.crawl(YqieSpider)
         d = runner.join()
         # d.addBoth(lambda _:reactor.stop())
         
 
     def _scheduler_task(self):
-        scheduler = BackgroundScheduler()      
+        # scheduler = BackgroundScheduler()     
+        scheduler = TwistedScheduler() 
         # scheduler.add_job(self.job, 'cron', day_of_week='1-5', hour=6, minute=30)
-        # scheduler.add_job(self._scrapy_job,'interval', minutes=40)
+        scheduler.add_job(self._scrapy_job,'interval', minutes=10)
         
         # scheduler.add_job(self._scrapy_job, 'date', run_date='2018-08-02 10:36:01')
         logg.info("Scheduler Task Start")
-        scheduler.add_job(self._scan_proxy_job,'interval', minutes=40)
+        # scheduler.add_job(self._scan_proxy_job,'interval', minutes=40)
         # scheduler.add_job(self._scan_proxy_job, 'date', run_date='2018-07-31 21:54:01')
      
         scheduler.start()
