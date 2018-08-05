@@ -2,13 +2,16 @@
 # -*- encoding: utf-8 -*-
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
-from scrapy.utils.log import configure_logging
+# from scrapy.utils.log import configure_logging
 from coolscrapy.spiders.kuaidaili_spider import KuaidailiSpider
 from coolscrapy.spiders.s31f_spider import S31fSpider
 from coolscrapy.spiders.xicidaili_spider import XicidailiSpider
 from coolscrapy.spiders.s89ip_spider import S89ipSpider
 from coolscrapy.spiders.yqie_spider import YqieSpider
 from coolscrapy.pipelines import ProxyDatabasePipeline
+
+from coolscrapy.utils import response_json
+
 # from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.schedulers.tornado import TornadoScheduler
 import os,time
@@ -64,9 +67,26 @@ class ProxyAdressHandler(tornado.web.RequestHandler):
         self._scheduler_task()
         self.write("Hello, world")
 
+class ProxiesURLHandler(tornado.web.RequestHandler):
+    
+    def _get_proxy_urls(self):
+        stime = time.time()
+        pa = ProxyDatabasePipeline()
+        pa.get_pass_urls(20)
+        etime = time.time()
+        delta = etime - stime
+    
+        return pa.get_pass_urls(20)
+    
+    def get(self):
+        data = self._get_proxy_urls()
+        return response_json(data,"OK",200)
+        # self.write("Hello, world")
+
 def make_app():
     return tornado.web.Application([
-        (r"/", ProxyAdressHandler),
+        (r"/scheduler", ProxyAdressHandler),
+        (r"/getproxiesurls", ProxiesURLHandler),
     ])
 
 if __name__ == "__main__":

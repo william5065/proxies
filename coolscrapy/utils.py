@@ -6,17 +6,13 @@ Desc :
 """
 import re
 import sys
-# from contextlib import contextmanager
-# from email.mime.multipart import MIMEMultipart
-# from email.mime.text import MIMEText
-# from email.mime.image import MIMEImage
 import os.path
 
-from coolscrapy.models import db_connect, create_news_table
-from sqlalchemy.orm import sessionmaker
+# from coolscrapy.models import db_connect, create_news_table
+# from sqlalchemy.orm import sessionmaker
 import requests
 import json
-from multiprocessing import Process, Queue ,freeze_support,Pool
+# from multiprocessing import Process, Queue ,freeze_support,Pool
 
 from coolscrapy.log_init import Log
 logg = Log()
