@@ -26,13 +26,19 @@ ITEM_PIPELINES = {
     # 'coolscrapy.pipelines.TobaccoDatabasePipeline': 7,
     
 }
+
+
 DOWNLOADER_MIDDLEWARES = {
     # 这里是下载中间件
+    # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    # 'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-    'coolscrapy.middlewares.RotateUserAgentMiddleware': 400,
+    'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+    # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    # 'coolscrapy.middlewares.RotateUserAgentMiddleware': 400,
     # 'scrapy_splash.SplashCookiesMiddleware': 723,
     # 'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    # 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 SPIDER_MIDDLEWARES = {
     # 这是爬虫中间件， 543是运行的优先级
