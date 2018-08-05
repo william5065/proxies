@@ -11,14 +11,14 @@ import sys
 # from email.mime.text import MIMEText
 # from email.mime.image import MIMEImage
 import os.path
-from settings import IMAGES_STORE
-from models import db_connect, create_news_table
+
+from coolscrapy.models import db_connect, create_news_table
 from sqlalchemy.orm import sessionmaker
 import requests
 import json
 from multiprocessing import Process, Queue ,freeze_support,Pool
 
-from log_init import Log
+from coolscrapy.log_init import Log
 logg = Log()
 
 

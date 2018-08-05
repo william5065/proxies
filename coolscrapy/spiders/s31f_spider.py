@@ -12,12 +12,12 @@ Desc :
 """
 
 import scrapy
-from items import ProxyItem
-from utils import check_proxy
+from coolscrapy.items import ProxyItem
+from coolscrapy.utils import check_proxy
 from bs4 import BeautifulSoup
 import re
 import requests
-from log_init import Log
+from coolscrapy.log_init import Log
 logg = Log()
 class S31fSpider(scrapy.Spider):
     name = "31f"
@@ -32,7 +32,7 @@ class S31fSpider(scrapy.Spider):
         soup = BeautifulSoup(data, "html5lib")
         sites =soup.findAll('tr')
 
-        print (response.url)
+        # print (response.url)
         for sel in sites:
             if sel.find(text =re.compile(r'\d+\.\d+\.\d+\.\d+')):
                 logg.info(sel)
@@ -57,8 +57,10 @@ class S31fSpider(scrapy.Spider):
                 proxies[item['protocol']]=url
                 item['protocol'] = item['protocol'].strip().lower()
                 item['speed'] = check_proxy('https://www.amazon.com/',proxies)
-                logg.info("item['speed']:"+ item['speed'])
+                logg.info("item['speed']:")
+                logg.info(item['speed'])
                 if item['speed']!='-1' and item['speed']!= None:
+    
                     yield item
                 
                 

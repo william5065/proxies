@@ -6,12 +6,12 @@ Desc :
 """
 
 import scrapy
-from items import ProxyItem
-from utils import check_proxy
+from coolscrapy.items import ProxyItem
+from coolscrapy.utils import check_proxy
 from bs4 import BeautifulSoup
 import re
 import requests
-from log_init import Log
+from coolscrapy.log_init import Log
 logg = Log()
 
 class KuaidailiSpider(scrapy.Spider):
@@ -39,7 +39,7 @@ class KuaidailiSpider(scrapy.Spider):
                 # url = response.urljoin(item['link'])
                 item['protocol'] = sel.findAll('td')[3].text
                 logg.info (item['protocol'])
-                item['position'] = sel.findAll('td')[5].text
+                item['position'] = sel.findAll('td')[4].text
                 logg.info (item['position'])
                 proxies ={}
                 item['anonymity'] = 'DDD'
@@ -50,7 +50,8 @@ class KuaidailiSpider(scrapy.Spider):
                         url = i + "//:"+item['ip'] +":"+item['port']
                         proxies[i]=url
                         item['speed'] = check_proxy('https://www.amazon.com/',proxies)
-                        logg.info("item['speed']:"+ item['speed'])
+                        logg.info("item['speed']:")
+                        logg.info(item['speed'])
                         if item['speed']!='-1'and item['speed']!=None:
                             item['protocol'] = i.strip().lower()
                             logg.info (item['protocol'])

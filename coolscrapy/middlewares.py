@@ -1,30 +1,27 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-"""
-Topic: 中间件集合
-Desc : 
-"""
-# import redis
+
+
 import random
-import logging
 from scrapy import signals
-from scrapy.http import Request
+# from scrapy.http import Request
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
-from log_init import Log
+from coolscrapy.log_init import Log
 logg = Log()
 
+from fake_useragent import UserAgent
 
+# class RandomUserAgent(object):
+#     # def __init__(self,crawl):
+#     #     super(RandomUserAgent,self).__init__()
+#     #     self.ua=UserAgent()
+#     def process_request(self, request, spider):
+#         #useragent = random.choice(USER_AGENTS)
+#         ua=UserAgent()
+#         request.headers.setdefault("User-Agent",ua.random)
+#         logg.info("User-Agent:"+ua.random)
 
 class RotateUserAgentMiddleware(UserAgentMiddleware):
-    """避免被ban策略之一：使用useragent池。
-    使用注意：需在settings.py中进行相应的设置。
-    更好的方式是使用：
-    pip install scrapy-fake-useragent
-    DOWNLOADER_MIDDLEWARES = {
-        'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-        'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
-    }
-    """
     def __init__(self, user_agent=''):
         super(RotateUserAgentMiddleware, self).__init__()
         self.user_agent = user_agent
@@ -32,7 +29,6 @@ class RotateUserAgentMiddleware(UserAgentMiddleware):
     def process_request(self, request, spider):
         ua = random.choice(self.user_agent_list)
         if ua:
-            # 记录当前使用的useragent
             logg.debug('Current UserAgent: ' + ua)
             request.headers.setdefault('User-Agent', ua)
 

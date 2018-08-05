@@ -10,11 +10,11 @@
 Topic: 爬取虎嗅网首页
 Desc : 
 """
-from log_init import Log
+from coolscrapy.log_init import Log
 
 import scrapy
-from items import ProxyItem
-from utils import check_proxy
+from coolscrapy.items import ProxyItem
+from coolscrapy.utils import check_proxy
 from bs4 import BeautifulSoup
 import re
 import requests
@@ -58,7 +58,8 @@ class XicidailiSpider(scrapy.Spider):
                 proxies[item['protocol']]=url
                 item['protocol'] = item['protocol'].strip().lower()
                 item['speed'] = check_proxy('https://www.amazon.com/',proxies)
-                logg.info("item['speed']:"+ item['speed'])
+                logg.info("item['speed']:")
+                logg.info(item['speed'])
                 if item['speed']!='-1' and item['speed']!= None:
                     yield item
                 

@@ -15,22 +15,18 @@ import json
 from contextlib import contextmanager
 
 from scrapy import signals, Request
-from scrapy.exporters import JsonItemExporter
-# from scrapy.pipelines.images import ImagesPipeline
-from scrapy.exceptions import DropItem
+
 from sqlalchemy.orm import sessionmaker
-from models import db_connect, create_news_table, PorxyAddress
-from utils import check_proxy,check_proxy_update,check_proxy_amazon
+from coolscrapy.models import db_connect, PorxyAddress
+from coolscrapy.utils import check_proxy,check_proxy_update,check_proxy_amazon
 
 from multiprocessing import freeze_support,Pool
 
-from functools import partial
 from sqlalchemy import desc,asc
 # Redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
-from log_init import Log
+from coolscrapy.log_init import Log
 logg = Log()
-
 
 @contextmanager
 def session_scope(Session):
@@ -46,9 +42,8 @@ def session_scope(Session):
     finally:
         session.close()
 
-
 class ProxyDatabasePipeline(object):
-    """Proxy Address记录保存到数据库"""
+   
 
     def __init__(self):
         logg.info("Init ProxyDatabasePipeline")
@@ -59,7 +54,7 @@ class ProxyDatabasePipeline(object):
     def open_spider(self, spider):
         """This method is called when the spider is opened."""
         # print("Proxy Address 记录保存到数据库 start")
-        logg.info("The spider is opened")
+        logg.info("The spider is opened ......")
         # pass
 
     def process_item(self, item, spider):
@@ -89,10 +84,11 @@ class ProxyDatabasePipeline(object):
                 logg.info("Add the proxy_address :")
                 logg.info(proxy_address)
                 logg.info("将ProxyAddress记录保存到数据库 end....")
+        return item
         
     
     def get_proxy_list(self):
-        with session_scope(self.Session) as session:
+        with  session_scope(self.Session) as session:
             freeze_support()
             logg.info("+++++++++++++")
             tmplist = session.query(PorxyAddress.proxy_address).all()           
@@ -127,7 +123,7 @@ class ProxyDatabasePipeline(object):
     
     def get_pass_urls(self,count):
         
-        with session_scope(self.Session) as session:
+        with  session_scope(self.Session) as session:
             tmplist = session.query(PorxyAddress.proxy_address).filter(PorxyAddress.deleted == 0).order_by(asc(PorxyAddress.speed)).all()
             proxy_adds = [i[0] for i in tmplist]
             logg.info("Get Pass URL:")
@@ -136,6 +132,6 @@ class ProxyDatabasePipeline(object):
     
 
     def close_spider(self, spider):
-        print("*********")
-        pass
+        logg.info("*********")
+        # pass
 
