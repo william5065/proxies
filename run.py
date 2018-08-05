@@ -52,11 +52,12 @@ class ProxyAdressHandler(tornado.web.RequestHandler):
         d1 = datetime.datetime.now()
         d2 = d1+datetime.timedelta(seconds=10)
         dates = d2.strftime("%Y-%m-%d %H:%M:%S")
-        scheduler.add_job(self._scrapy_job,'date', run_date=dates, args=[])
+
+        # scheduler.add_job(self._scrapy_job,'date', run_date=dates, args=[])
 
         scheduler.add_job(self._scrapy_job,'interval', hours=50)
 
-        scheduler.add_job(self._scan_database_address,'date', run_date=dates, args=[])
+        # scheduler.add_job(self._scan_database_address,'date', run_date=dates, args=[])
 
         scheduler.add_job(self._scan_database_address,'interval', minutes=20)
 
@@ -65,23 +66,22 @@ class ProxyAdressHandler(tornado.web.RequestHandler):
         
     def get(self):
         self._scheduler_task()
-        self.write("Hello, world")
+        self.write("scheduler task start")
 
 class ProxiesURLHandler(tornado.web.RequestHandler):
     
     def _get_proxy_urls(self):
         stime = time.time()
         pa = ProxyDatabasePipeline()
-        pa.get_pass_urls(20)
+        data = pa.get_pass_urls(20)
         etime = time.time()
         delta = etime - stime
-    
-        return pa.get_pass_urls(20)
+        logg.info("checked time:"+str(delta))
+        return data
     
     def get(self):
         data = self._get_proxy_urls()
-        return response_json(data,"OK",200)
-        # self.write("Hello, world")
+        self.write(response_json(data,"OK",200))
 
 def make_app():
     return tornado.web.Application([

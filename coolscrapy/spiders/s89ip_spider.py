@@ -46,7 +46,7 @@ class S89ipSpider(scrapy.Spider):
                 proxies[item['protocol']]=url
                 item['protocol'] = item['protocol'].strip().lower()
                 item['speed'] = check_proxy('https://www.amazon.com/',proxies)
-                if item['speed']!='-1':
+                if item['speed']!='-1' and item['speed']!= None:
                     yield item
 
                 item['protocol'] ="https"
