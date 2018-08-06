@@ -55,7 +55,7 @@ class ProxyAdressHandler(tornado.web.RequestHandler):
 
         # scheduler.add_job(self._scrapy_job,'date', run_date=dates, args=[])
 
-        scheduler.add_job(self._scrapy_job,'interval', hours=50)
+        scheduler.add_job(self._scrapy_job,'interval', minutes=50)
 
         # scheduler.add_job(self._scan_database_address,'date', run_date=dates, args=[])
 
